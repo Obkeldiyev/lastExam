@@ -5,6 +5,7 @@ import { AdminsModule } from './admins/admins.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import { Admin } from './admins/entities/admin.entity';
+import { TeachersModule } from './teachers/teachers.module';
 dotenv.config();
 
 @Module({
@@ -21,6 +22,7 @@ dotenv.config();
       logging: true,
     }),
     AdminsModule,
+    TeachersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
