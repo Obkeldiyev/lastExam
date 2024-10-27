@@ -1,1 +1,19 @@
-export class Teacher {}
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
+export class Teacher {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ type: 'varchar' })
+  fullname: string;
+
+  @Column({ type: 'varchar' })
+  username: string;
+
+  @Column({ type: 'varchar' })
+  password: string;
+
+  @Column({ type: 'varchar' })
+  role: string;
+}

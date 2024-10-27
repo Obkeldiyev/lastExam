@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import { Admin } from './admins/entities/admin.entity';
 import { TeachersModule } from './teachers/teachers.module';
+import { Teacher } from './teachers/entities/teacher.entity';
 dotenv.config();
 
 @Module({
@@ -17,7 +18,7 @@ dotenv.config();
       username: process.env.DB_USERNAME as string,
       password: process.env.DB_PASSWORD as string,
       database: process.env.DB_DATABASE as string,
-      entities: [Admin],
+      entities: [Admin, Teacher],
       synchronize: true,
       logging: true,
     }),
