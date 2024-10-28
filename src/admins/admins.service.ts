@@ -100,6 +100,18 @@ export class AdminsService {
       const admin = await this.adminRepository.findOneBy({ id: data.id });
 
       if (admin) {
+        const checkUsername = await this.adminRepository.findOneBy({
+          username: updateAdminDto.username,
+        });
+
+        if (checkUsername) {
+          return {
+            status: 409,
+            success: false,
+            message: 'This username has been taken',
+          };
+        }
+
         await this.adminRepository.update(admin.id, updateAdminDto);
 
         return {
