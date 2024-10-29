@@ -11,6 +11,7 @@ import { AdminAuthModule } from './admin-auth/admin-auth.module';
 import { TeacherAuthModule } from './teacher-auth/teacher-auth.module';
 import { StudentsModule } from './students/students.module';
 import { Student } from './students/entities/student.entity';
+import { StudentAuthModule } from './student-auth/student-auth.module';
 dotenv.config();
 
 @Module({
@@ -31,6 +32,7 @@ dotenv.config();
     AdminAuthModule,
     TeacherAuthModule,
     StudentsModule,
+    StudentAuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
