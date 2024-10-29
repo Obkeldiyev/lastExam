@@ -6,7 +6,7 @@ import { CreateTeacherAuthDto } from './dto/create-teacher-auth.dto';
 export class TeacherAuthController {
   constructor(private readonly teacherAuthService: TeacherAuthService) {}
 
-  @Post()
+  @Post('login')
   create(@Body() createTeacherAuthDto: CreateTeacherAuthDto) {
     return this.teacherAuthService.create(createTeacherAuthDto);
   }

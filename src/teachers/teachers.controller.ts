@@ -21,7 +21,7 @@ export class TeachersController {
     return this.teachersService.create(createTeacherDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.teachersService.findAll();
   }
@@ -44,7 +44,7 @@ export class TeachersController {
     return this.teachersService.remove(token);
   }
 
-  @Get('profile')
+  @Get()
   getProfile(@Headers('Authorization') token: string) {
     return this.teachersService.getTeacherProfile(token);
   }
