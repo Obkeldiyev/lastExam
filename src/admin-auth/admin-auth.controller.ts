@@ -6,7 +6,7 @@ import { CreateAdminAuthDto } from './dto/create-admin-auth.dto';
 export class AdminAuthController {
   constructor(private readonly adminAuthService: AdminAuthService) {}
 
-  @Post()
+  @Post('login')
   login(@Body() createAdminAuthDto: CreateAdminAuthDto) {
     return this.adminAuthService.login(createAdminAuthDto);
   }
