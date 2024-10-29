@@ -12,6 +12,9 @@ import { TeacherAuthModule } from './teacher-auth/teacher-auth.module';
 import { StudentsModule } from './students/students.module';
 import { Student } from './students/entities/student.entity';
 import { StudentAuthModule } from './student-auth/student-auth.module';
+import { CoursesModule } from './courses/courses.module';
+import { HometasksModule } from './hometasks/hometasks.module';
+import { LessonsModule } from './lessons/lessons.module';
 dotenv.config();
 
 @Module({
@@ -33,6 +36,9 @@ dotenv.config();
     TeacherAuthModule,
     StudentsModule,
     StudentAuthModule,
+    CoursesModule,
+    LessonsModule,
+    HometasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

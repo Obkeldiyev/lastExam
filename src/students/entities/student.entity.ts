@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Course } from 'src/courses/entities/course.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Student {
@@ -16,4 +23,8 @@ export class Student {
 
   @Column({ type: 'varchar' })
   role: string;
+
+  @ManyToMany(() => Course, (courses) => courses.students)
+  @JoinTable()
+  courses: Course[];
 }
