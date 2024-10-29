@@ -8,7 +8,7 @@ export class Teacher {
   @Column({ type: 'varchar' })
   fullname: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', unique: true })
   username: string;
 
   @Column({ type: 'varchar' })
