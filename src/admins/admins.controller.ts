@@ -21,7 +21,7 @@ export class AdminsController {
     return this.adminsService.create(createAdminDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.adminsService.findAll();
   }
@@ -44,7 +44,7 @@ export class AdminsController {
     return this.adminsService.remove(token);
   }
 
-  @Get('profile')
+  @Get()
   getProfile(@Headers('Authorization') token: string) {
     return this.adminsService.getProfile(token);
   }
