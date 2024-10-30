@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Headers,
 } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -20,7 +21,7 @@ export class CoursesController {
     return this.coursesService.create(createCourseDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.coursesService.findAll();
   }
@@ -38,5 +39,15 @@ export class CoursesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.coursesService.remove(+id);
+  }
+
+  @Post('joining')
+  joiningCourse(@Headers('Authorization') token: string, @Body() id: number) {
+    return this.coursesService.studentsJoin(token, id);
+  }
+
+  @Get()
+  getMyCourses(@Headers('Authorization') token: string) {
+    return this.coursesService.myCourses(token);
   }
 }

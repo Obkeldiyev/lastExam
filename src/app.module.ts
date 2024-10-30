@@ -15,6 +15,9 @@ import { StudentAuthModule } from './student-auth/student-auth.module';
 import { CoursesModule } from './courses/courses.module';
 import { HometasksModule } from './hometasks/hometasks.module';
 import { LessonsModule } from './lessons/lessons.module';
+import { Course } from './courses/entities/course.entity';
+import { Lesson } from './lessons/entities/lesson.entity';
+import { Hometask } from './hometasks/entities/hometask.entity';
 dotenv.config();
 
 @Module({
@@ -26,7 +29,7 @@ dotenv.config();
       username: process.env.DB_USERNAME as string,
       password: process.env.DB_PASSWORD as string,
       database: process.env.DB_DATABASE as string,
-      entities: [Admin, Teacher, Student],
+      entities: [Admin, Teacher, Student, Course, Lesson, Hometask],
       synchronize: true,
       logging: true,
     }),
