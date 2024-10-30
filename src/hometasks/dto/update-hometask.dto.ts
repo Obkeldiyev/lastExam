@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateHometaskDto } from './create-hometask.dto';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateHometaskDto extends PartialType(CreateHometaskDto) {}
+export class UpdateHometaskDto {
+  @IsNotEmpty()
+  @IsString()
+  desc: string;
+}

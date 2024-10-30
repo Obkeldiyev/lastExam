@@ -15,23 +15,132 @@ export class HometasksService {
     private readonly lessonRepository: Repository<Lesson>,
   ) {}
 
-  create(createHometaskDto: CreateHometaskDto) {
-    return 'This action adds a new hometask';
+  async create(createHometaskDto: CreateHometaskDto) {
+    try {
+      const checkHometask = await this.lessonRepository.findOneBy({
+        id: createHometaskDto.lessonId,
+      });
+
+      if (checkHometask) {
+        const newHometask =
+          await this.hometaskRepository.create(createHometaskDto);
+        await this.hometaskRepository.save(newHometask);
+
+        return {
+          status: 202,
+          success: true,
+          message: 'created successfully',
+        };
+      } else {
+      }
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: false,
+        message: error.message,
+      };
+    }
   }
 
-  findAll() {
-    return `This action returns all hometasks`;
+  async findAll() {
+    try {
+      const hometasks = await this.hometaskRepository.find();
+
+      return {
+        status: 200,
+        success: true,
+        message: 'All hometasks',
+        data: hometasks,
+      };
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: false,
+        message: error.message,
+      };
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} hometask`;
+  async findOne(id: number) {
+    try {
+      const hometask = await this.hometaskRepository.findOneBy({ id });
+
+      if (hometask) {
+        return {
+          status: 200,
+          success: true,
+          message: 'Found it',
+          data: hometask,
+        };
+      } else {
+        return {
+          status: 404,
+          success: false,
+          message: 'This hometask does not exists',
+        };
+      }
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: false,
+        message: error.message,
+      };
+    }
   }
 
-  update(id: number, updateHometaskDto: UpdateHometaskDto) {
-    return `This action updates a #${id} hometask`;
+  async update(id: number, updateHometaskDto: UpdateHometaskDto) {
+    try {
+      const checkHometask = await this.hometaskRepository.findOneBy({ id });
+
+      if (checkHometask) {
+        await this.hometaskRepository.update(id, updateHometaskDto);
+
+        return {
+          status: 201,
+          success: true,
+          message: 'Updated successfully',
+        };
+      } else {
+        return {
+          status: 404,
+          success: false,
+          message: 'This hometask does not exists',
+        };
+      }
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: true,
+        message: error.message,
+      };
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} hometask`;
+  async remove(id: number) {
+    try {
+      const checkHometask = await this.hometaskRepository.findOneBy({ id });
+
+      if (checkHometask) {
+        await this.hometaskRepository.delete({ id });
+
+        return {
+          status: 200,
+          success: true,
+          message: 'Hometask deleted successfully',
+        };
+      } else {
+        return {
+          status: 404,
+          success: false,
+          message: 'This hometask does not exists',
+        };
+      }
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: false,
+        message: error.message,
+      };
+    }
   }
 }
