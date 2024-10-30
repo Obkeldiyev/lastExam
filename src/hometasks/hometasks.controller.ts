@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { HometasksService } from './hometasks.service';
 import { CreateHometaskDto } from './dto/create-hometask.dto';
 import { UpdateHometaskDto } from './dto/update-hometask.dto';
@@ -23,7 +31,10 @@ export class HometasksController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHometaskDto: UpdateHometaskDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateHometaskDto: UpdateHometaskDto,
+  ) {
     return this.hometasksService.update(+id, updateHometaskDto);
   }
 
