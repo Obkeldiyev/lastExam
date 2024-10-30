@@ -18,6 +18,7 @@ import { LessonsModule } from './lessons/lessons.module';
 import { Course } from './courses/entities/course.entity';
 import { Lesson } from './lessons/entities/lesson.entity';
 import { Hometask } from './hometasks/entities/hometask.entity';
+import { SubmissionModule } from './submission/submission.module';
 dotenv.config();
 
 @Module({
@@ -42,6 +43,7 @@ dotenv.config();
     CoursesModule,
     LessonsModule,
     HometasksModule,
+    SubmissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
