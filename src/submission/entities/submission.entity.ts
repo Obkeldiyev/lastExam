@@ -16,6 +16,9 @@ export class Submission {
   @Column({ type: 'varchar' })
   content: string;
 
+  @Column({ type: 'varchar', default: 'Bajarilmagan' })
+  status: string;
+
   @OneToOne(() => Hometask)
   @JoinTable()
   hometask: Hometask;

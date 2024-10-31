@@ -19,6 +19,7 @@ import { Course } from './courses/entities/course.entity';
 import { Lesson } from './lessons/entities/lesson.entity';
 import { Hometask } from './hometasks/entities/hometask.entity';
 import { SubmissionModule } from './submission/submission.module';
+import { Submission } from './submission/entities/submission.entity';
 dotenv.config();
 
 @Module({
@@ -30,7 +31,7 @@ dotenv.config();
       username: process.env.DB_USERNAME as string,
       password: process.env.DB_PASSWORD as string,
       database: process.env.DB_DATABASE as string,
-      entities: [Admin, Teacher, Student, Course, Lesson, Hometask],
+      entities: [Admin, Teacher, Student, Course, Lesson, Hometask, Submission],
       synchronize: true,
       logging: true,
     }),

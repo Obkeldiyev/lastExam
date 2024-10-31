@@ -16,6 +16,9 @@ export class Lesson {
   @Column({ type: 'varchar' })
   content: string;
 
+  @Column({ type: 'int' })
+  count: number;
+
   @ManyToOne(() => Course, (course) => course.lessons)
   course: Course;
 

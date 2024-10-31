@@ -1,26 +1,276 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Submission } from './entities/submission.entity';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { Hometask } from 'src/hometasks/entities/hometask.entity';
+import { Student } from 'src/students/entities/student.entity';
+import { verify } from 'jsonwebtoken';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class SubmissionService {
-  create(createSubmissionDto: CreateSubmissionDto) {
-    return 'This action adds a new submission';
+  constructor(
+    @InjectRepository(Submission)
+    private readonly submissionRepository: Repository<Submission>,
+    @InjectRepository(Hometask)
+    private readonly hometaskRepository: Repository<Hometask>,
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository<Hometask>,
+  ) {}
+
+  async create(createSubmissionDto: CreateSubmissionDto, token: string) {
+    try {
+      const data: any = await verify(token, process.env.SECRET_KEY);
+
+      const checkStudent = await this.studentRepository.findOneBy({
+        id: data.id,
+      });
+
+      if (checkStudent) {
+        const checkSubmission = await this.submissionRepository.findOne({
+          where: {
+            hometask: { id: createSubmissionDto.hometaskId },
+            student: { id: checkStudent.id.toString() },
+          } as FindOptionsWhere<Submission>,
+        });
+
+        if (checkSubmission) {
+          return {
+            status: 409,
+            success: false,
+            message: 'This hometask done if you wanna change update it',
+          };
+        } else {
+          const newSubmission = this.submissionRepository.create({
+            content: createSubmissionDto.content,
+          });
+
+          newSubmission.student = checkStudent as unknown as Student;
+          newSubmission.hometask = {
+            id: createSubmissionDto.hometaskId,
+          } as Hometask;
+
+          await this.submissionRepository.save(newSubmission);
+
+          return {
+            status: 202,
+            success: true,
+            message: 'Submission added successfully',
+          };
+        }
+      } else {
+        return {
+          status: 404,
+          success: false,
+          message: 'This student does not exists',
+        };
+      }
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: false,
+        message: error.message,
+      };
+    }
   }
 
-  findAll() {
-    return `This action returns all submission`;
+  async findAll() {
+    try {
+      const submissions = await this.submissionRepository.find();
+
+      return {
+        status: 200,
+        success: true,
+        message: 'All submissions',
+        data: submissions,
+      };
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: false,
+        message: error.message,
+      };
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} submission`;
+  async findOne(id: number) {
+    try {
+      const submission = await this.submissionRepository.findOneBy({ id });
+
+      if (submission) {
+        return {
+          status: 200,
+          success: true,
+          message: 'Found it',
+          data: submission,
+        };
+      } else {
+        return {
+          status: 404,
+          success: false,
+          message: 'This submission does not exists',
+        };
+      }
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: false,
+        message: error.message,
+      };
+    }
   }
 
-  update(id: number, updateSubmissionDto: UpdateSubmissionDto) {
-    return `This action updates a #${id} submission`;
+  async update(
+    id: number,
+    updateSubmissionDto: UpdateSubmissionDto,
+    token: string,
+  ) {
+    try {
+      const checkSubmission = await this.submissionRepository.findOneBy({ id });
+      const data: any = verify(token, process.env.SECRET_KEY);
+
+      if (checkSubmission) {
+        const checkStudent = await this.studentRepository.findOneBy({
+          id: data.id,
+        });
+
+        if (checkStudent) {
+          if (
+            (checkSubmission.student.id as unknown as string) ==
+            (checkStudent.id as unknown as string)
+          ) {
+            await this.submissionRepository.update(id, updateSubmissionDto);
+
+            return {
+              status: 201,
+              success: true,
+              message: 'Submission updated',
+            };
+          } else {
+            return {
+              status: 403,
+              success: false,
+              message: 'It is not your hometask',
+            };
+          }
+        } else {
+          return {
+            status: 404,
+            success: false,
+            message: 'You are not existing',
+          };
+        }
+      } else {
+        return {
+          status: 404,
+          success: false,
+          message: 'This submission does not exists',
+        };
+      }
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: false,
+        message: error.message,
+      };
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} submission`;
+  async getMyHometasks(token: string) {
+    try {
+      const data: any = verify(token, process.env.SECRET_KEY);
+
+      const studentCheck = await this.studentRepository.findOneBy({
+        id: data.id,
+      });
+
+      if (studentCheck) {
+        const myHometasks = await this.submissionRepository.find({
+          where: { student: { id: studentCheck.id as unknown as string } },
+        });
+
+        return {
+          status: 200,
+          success: true,
+          message: 'Your hometasks',
+          data: myHometasks,
+        };
+      } else {
+        return {
+          status: 404,
+          success: false,
+          message: 'You are not in db',
+        };
+      }
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: false,
+        message: error.message,
+      };
+    }
+  }
+
+  async acceptSubmission(id: number) {
+    try {
+      const checkSubmission = await this.submissionRepository.findOneBy({ id });
+
+      if (checkSubmission) {
+        checkSubmission.status = 'Accepted';
+
+        await this.submissionRepository.update(id, checkSubmission);
+
+        return {
+          status: 200,
+          success: true,
+          message: 'Successfully',
+        };
+      } else {
+        return {
+          status: 404,
+          success: false,
+          message: 'This submission does not exists',
+        };
+      }
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: false,
+        message: error.message,
+      };
+    }
+  }
+
+  async rejectSubmission(id: number) {
+    try {
+      const checkSubmission = await this.submissionRepository.findOneBy({ id });
+
+      if (checkSubmission) {
+        checkSubmission.status = 'Rejected';
+
+        await this.submissionRepository.update(id, checkSubmission);
+
+        return {
+          status: 201,
+          success: false,
+          message: 'Successfully',
+        };
+      } else {
+        return {
+          status: 404,
+          success: false,
+          message: 'This submission does not exists',
+        };
+      }
+    } catch (error) {
+      return {
+        status: error.status || 500,
+        success: false,
+        message: error.message,
+      };
+    }
   }
 }
