@@ -194,4 +194,35 @@ export class TeachersService {
       };
     }
   }
+
+  async getTeacherCourses(token: string) {
+    try {
+      const data: any = verify(token, process.env.SECRET_KEY);
+
+      const check = await this.teacherRepository.findOneBy({ id: data.id });
+
+      if (check) {
+        const courses = await check.courses;
+
+        return {
+          status: 200,
+          success: true,
+          message: 'Your courses',
+          data: courses,
+        };
+      } else {
+        return {
+          status: 404,
+          success: false,
+          message: 'This teacher does not exists',
+        };
+      }
+    } catch (error) {
+      return {
+        status: error.message || 500,
+        success: false,
+        message: error.message,
+      };
+    }
+  }
 }

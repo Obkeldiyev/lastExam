@@ -3,17 +3,28 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable()
-export class verifyToken implements NestInterceptor {
+export class VerifyTokenInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest();
-    console.log('Middleware is working');
+    const token = req.headers['authorization'];
 
-    return next
-      .handle()
-      .pipe(tap(() => console.log(`Completed ${req.headers}`)));
+    if (!token) {
+      throw new UnauthorizedException('Token is required');
+    }
+
+    return next.handle().pipe(
+      tap(() => {}),
+      catchError((err) => {
+        return throwError(
+          () => new UnauthorizedException(err.message || 'Unauthorized access'),
+        );
+      }),
+    );
   }
 }

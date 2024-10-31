@@ -172,14 +172,23 @@ export class CoursesService {
       const checkCourse = await this.courseRepository.findOneBy({ id });
 
       if (checkCourse) {
+        if (!Array.isArray(checkCourse.students)) {
+          checkCourse.students = [];
+        }
+
         const checkUser = await this.studentRepository.findOneBy({
           id: data.id,
         });
 
         if (checkUser) {
+          if (!Array.isArray(checkUser.courses)) {
+            checkUser.courses = [];
+          }
+
           const isAlreadyEnrolled = checkCourse.students.some(
             (s) => s.id === checkUser.id,
           );
+
           if (isAlreadyEnrolled) {
             return {
               status: 409,
@@ -203,14 +212,14 @@ export class CoursesService {
           return {
             status: 403,
             success: false,
-            message: 'You are not existing please login or register again',
+            message: 'You do not exist; please login or register again',
           };
         }
       } else {
         return {
           status: 404,
           success: false,
-          message: 'THeres no this course',
+          message: 'There’s no such course',
         };
       }
     } catch (error) {
@@ -226,8 +235,9 @@ export class CoursesService {
     try {
       const data: any = await verify(token, process.env.SECRET_KEY as string);
 
-      const checkStudent = await this.studentRepository.findOneBy({
-        id: data.id,
+      const checkStudent = await this.studentRepository.findOne({
+        where: { id: data.id },
+        relations: ['courses'],
       });
 
       if (checkStudent) {
@@ -236,13 +246,13 @@ export class CoursesService {
         return {
           status: 200,
           success: true,
-          message: courses,
+          data: courses,
         };
       } else {
         return {
           status: 404,
           success: false,
-          message: 'This student does not exists',
+          message: 'This student does not exist',
         };
       }
     } catch (error) {
