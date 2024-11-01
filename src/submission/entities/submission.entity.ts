@@ -1,12 +1,6 @@
 import { Hometask } from 'src/hometasks/entities/hometask.entity';
 import { Student } from 'src/students/entities/student.entity';
-import {
-  Column,
-  Entity,
-  JoinTable,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Submission {
@@ -19,11 +13,9 @@ export class Submission {
   @Column({ type: 'varchar', default: 'Bajarilmagan' })
   status: string;
 
-  @OneToOne(() => Hometask)
-  @JoinTable()
-  hometask: Hometask;
-
-  @OneToOne(() => Student)
-  @JoinTable()
+  @ManyToOne(() => Student, (student) => student.submissions)
   student: Student;
+
+  @ManyToOne(() => Hometask, (hometask) => hometask.submissions)
+  hometask: Hometask;
 }

@@ -1,5 +1,12 @@
 import { Lesson } from 'src/lessons/entities/lesson.entity';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Submission } from 'src/submission/entities/submission.entity';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Hometask {
@@ -11,4 +18,7 @@ export class Hometask {
 
   @OneToOne(() => Lesson, (lesson) => lesson.hometask)
   lesson: Lesson;
+
+  @OneToMany(() => Submission, (submissions) => submissions.hometask)
+  submissions: Submission[];
 }

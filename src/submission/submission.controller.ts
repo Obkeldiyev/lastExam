@@ -65,13 +65,13 @@ export class SubmissionController {
   @UseInterceptors(VerifyTokenInterceptor)
   @UseInterceptors(VerifyTeacherTokenInterceptor)
   acceptSubmission(@Body() id: number) {
-    return this.submissionService.acceptSubmission(id);
+    return this.submissionService.acceptSubmission(+id);
   }
 
-  @Post('accepting')
+  @Post('rejecting')
   @UseInterceptors(VerifyTokenInterceptor)
   @UseInterceptors(VerifyTeacherTokenInterceptor)
   rejectSubmission(@Body() id: number) {
-    return this.submissionService.rejectSubmission(id);
+    return this.submissionService.rejectSubmission(+id);
   }
 }

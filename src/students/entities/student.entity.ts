@@ -1,9 +1,11 @@
 import { Course } from 'src/courses/entities/course.entity';
+import { Submission } from 'src/submission/entities/submission.entity';
 import {
   Column,
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -27,4 +29,7 @@ export class Student {
   @ManyToMany(() => Course, (courses) => courses.students)
   @JoinTable()
   courses: Course[];
+
+  @OneToMany(() => Submission, (submissions) => submissions.student)
+  submissions: Submission[];
 }

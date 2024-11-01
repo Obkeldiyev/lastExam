@@ -3,7 +3,7 @@ import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Submission } from './entities/submission.entity';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Hometask } from 'src/hometasks/entities/hometask.entity';
 import { Student } from 'src/students/entities/student.entity';
 import { verify } from 'jsonwebtoken';
@@ -34,7 +34,7 @@ export class SubmissionService {
           where: {
             hometask: { id: createSubmissionDto.hometaskId },
             student: { id: checkStudent.id.toString() },
-          } as FindOptionsWhere<Submission>,
+          },
         });
 
         if (checkSubmission) {
@@ -129,7 +129,10 @@ export class SubmissionService {
     token: string,
   ) {
     try {
-      const checkSubmission = await this.submissionRepository.findOneBy({ id });
+      const checkSubmission = await this.submissionRepository.findOne({
+        where: { id },
+        relations: ['student'],
+      });
       const data: any = verify(token, process.env.SECRET_KEY);
 
       if (checkSubmission) {
@@ -216,26 +219,27 @@ export class SubmissionService {
 
   async acceptSubmission(id: number) {
     try {
+      console.log(id);
       const checkSubmission = await this.submissionRepository.findOneBy({ id });
 
       if (checkSubmission) {
         checkSubmission.status = 'Accepted';
-
         await this.submissionRepository.update(id, checkSubmission);
 
         return {
           status: 200,
           success: true,
-          message: 'Successfully',
+          message: 'Successfully accepted',
         };
       } else {
         return {
           status: 404,
           success: false,
-          message: 'This submission does not exists',
+          message: 'This submission does not exist',
         };
       }
     } catch (error) {
+      console.log(error);
       return {
         status: error.status || 500,
         success: false,
@@ -246,26 +250,27 @@ export class SubmissionService {
 
   async rejectSubmission(id: number) {
     try {
+      console.log(id);
       const checkSubmission = await this.submissionRepository.findOneBy({ id });
 
       if (checkSubmission) {
         checkSubmission.status = 'Rejected';
-
         await this.submissionRepository.update(id, checkSubmission);
 
         return {
           status: 201,
-          success: false,
-          message: 'Successfully',
+          success: true,
+          message: 'Successfully rejected',
         };
       } else {
         return {
           status: 404,
           success: false,
-          message: 'This submission does not exists',
+          message: 'This submission does not exist',
         };
       }
     } catch (error) {
+      console.log(error);
       return {
         status: error.status || 500,
         success: false,
